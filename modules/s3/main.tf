@@ -13,10 +13,10 @@ resource "aws_s3_bucket_ownership_controls" "bucket_ownership_ctrl" {
 resource "aws_s3_bucket_public_access_block" "public_access_block" {
   bucket = aws_s3_bucket.tf_bucket.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_acl" "my_acl" {
@@ -25,7 +25,7 @@ resource "aws_s3_bucket_acl" "my_acl" {
     aws_s3_bucket_ownership_controls.bucket_ownership_ctrl,
     aws_s3_bucket_public_access_block.public_access_block
   ]
-  acl = "public-read"
+  acl = "private"
 }
 
 resource "aws_s3_bucket_website_configuration" "web_conf" {
@@ -57,25 +57,3 @@ resource "aws_s3_bucket_policy" "public_policy" {
     ]
   })
 }
-
-
-
-# Policy that allows ONLY CloudFront OAI to read
-# resource "aws_s3_bucket_policy" "this" {
-#   bucket = aws_s3_bucket.this.id
-#   policy = data.aws_iam_policy_document.s3_policy.json
-# }
-
-# data "aws_iam_policy_document" "s3_policy" {
-#   statement {
-#     effect = "Allow"
-
-#     principals {
-#       type        = "AWS"
-#       identifiers = [var.oai_iam_arn]
-#     }
-
-#     actions   = ["s3:GetObject"]
-#     resources = ["${aws_s3_bucket.this.arn}/*"]
-#   }
-# }
